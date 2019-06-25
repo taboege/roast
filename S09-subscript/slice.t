@@ -133,9 +133,11 @@ subtest 'no "drift" when re-using lazy iterable for indexing' => {
 subtest 'infinite ranges and whatever stars' => {
     plan 6;
     is-deeply (^3)[0 ..  Inf],       (0, 1, 2), 'Inf range inclusive';
-    is-deeply (^3)[0 ..^ Inf],       (0, 1, 2), 'Inf range exclusive';
     is-deeply (^3)[0 ..  *],         (0, 1, 2), 'Whatever range inclusive';
-    is-deeply (^3)[0 ..^ *],         (0, 1, 2), 'Whatever range exclusive';
+    quietly { # Warning introduced for https://github.com/rakudo/rakudo/issues/3010
+        is-deeply (^3)[0 ..^ Inf],   (0, 1, 2), 'Inf range exclusive';
+        is-deeply (^3)[0 ..^ *],     (0, 1, 2), 'Whatever range exclusive';
+    }
     is        (^3)[*-1],             2,         'Whatever callable';
     is        (^3)[{ $^elems - 1 }], 2,         'Callable';
 }
